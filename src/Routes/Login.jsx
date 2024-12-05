@@ -1,13 +1,16 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { User } from "../utils/validation";
-import { UserContext } from "../Components/userContext";
-import fetchUser from "../utils/fetchUser";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../Redux/middleware";
+import BackendAPI from "../BackendAPI";
 
 export default function Login() {
     const navigate = useNavigate();
-    const userContext = useContext(UserContext);
+
+    const isLoading = useSelector((state) => state.loading);
+    const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
     const handleSetEmail = useCallback((e) => {
@@ -19,20 +22,21 @@ export default function Login() {
         setPassword(e.target.value);
     });
 
+    const [loadedUser, setLoadedUser] = useState("")
     const [errors, setErrors] = useState(null);
     const handleLogIn = useCallback(async () => {
         try {
             User.parse({ email, password });
             setErrors(null);
 
-            const userData = await fetchUser(email, password);
-            console.log(userData)
-            userContext.setUser(userData);
-            navigate("/");
+            const user = await BackendAPI.getUser("", email, password);
+            setLoadedUser(user)
         } catch (err) {
             if (err instanceof z.ZodError) {
+                console.log(err.format());
                 setErrors(err.format());
             } else if (err instanceof Error) {
+                console.error(err)
                 setErrors({
                     notFound:
                         "User with this email and password does not found",
@@ -40,6 +44,13 @@ export default function Login() {
             }
         }
     }, [email, password]);
+
+    useEffect(() => {
+        if (!isLoading && loadedUser) {
+            dispatch(setUser(loadedUser));
+            navigate("/");
+        }
+    }, [loadedUser]);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">

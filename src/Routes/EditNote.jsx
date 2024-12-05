@@ -1,12 +1,12 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { UserContext } from "../Components/userContext";
-import { endpoints } from "../utils/constants";
+import BackendAPI from "../BackendAPI";
+import { useSelector } from "react-redux";
 
 export default function ReadNote() {
     const { noteUUID } = useParams();
 
-    const userContext = useContext(UserContext);
+    const user = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     const [note, setNote] = useState({});
@@ -14,13 +14,7 @@ export default function ReadNote() {
     useEffect(() => {
         const fetchNote = async () => {
             try {
-                const response = await fetch(
-                    endpoints.userData(userContext.user.id)
-                );
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                const userData = await response.json();
+                const userData = await BackendAPI.getUser(user.uuid);
                 const foundNote = userData.notes.find(
                     (n) => n.uuid === noteUUID
                 );
@@ -35,7 +29,7 @@ export default function ReadNote() {
         };
 
         fetchNote();
-    }, [noteUUID, userContext.user.id]);
+    }, [noteUUID, user.uuid]);
 
     const [textarea, setTextarea] = useState("");
     const handleChangeTextarea = useCallback((e) => {
@@ -53,25 +47,23 @@ export default function ReadNote() {
             setErr(["Title must not be empty."]);
             return;
         }
-        fetch(endpoints.userData(userContext.user.id))
-            .then((r) => r.json())
-            .then((userData) => {
-                let userDataNote = userData.notes.filter(
-                    (note) => note.uuid === noteUUID
-                )[0];
-                userDataNote.title = title;
-                userDataNote.description = textarea;
-                userData = { ...userData, userDataNote };
-                fetch(endpoints.userData(userContext.user.id), {
-                    method: "PUT",
-                    body: JSON.stringify(userData),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }).then(() => {
-                    navigate("/notes");
-                });
+        BackendAPI.getUser(user.uuid).then((userData) => {
+            let userDataNote = userData.notes.filter(
+                (note) => note.uuid === noteUUID
+            )[0];
+            userDataNote.title = title;
+            userDataNote.description = textarea;
+            userData = { ...userData, userDataNote };
+            fetch(BackendAPI.getUserDataURL(user.uuid), {
+                method: "PUT",
+                body: JSON.stringify(userData),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }).then(() => {
+                navigate("/notes");
             });
+        });
     });
 
     return (

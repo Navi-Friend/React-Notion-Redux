@@ -1,13 +1,12 @@
-import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../Components/userContext";
 import useNotes from "../hooks/useNotes";
+import { useSelector } from "react-redux";
 
 export default function Notes() {
-    const userContext = useContext(UserContext);
+    const user = useSelector((state) => state);
     const navigate = useNavigate();
 
-    const [notes, addNote, deleteNote] = useNotes(userContext.user.id);
+    const [notes, addNote, deleteNote] = useNotes(user.uuid);
     // Note example
     // {
     //     uuid: uuidv4(),  // must contain uuid

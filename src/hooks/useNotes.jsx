@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { endpoints } from "../utils/constants";
+// import { endpoints } from "../utils/constants";
 
 export default function useNotes(userId) {
     const [notes, setNotes] = useState([]);

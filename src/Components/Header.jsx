@@ -1,11 +1,12 @@
-import { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { UserContext } from "./userContext";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUser } from "../Redux/actions";
 
 export default function Header() {
-    const userContext = useContext(UserContext);
+    const user = useSelector((state) => state.user);
+    const dispatch = useDispatch()
     const handleLogout = () => {
-        userContext.setUser({ email: "", password: "", date: "" });
+        dispatch(removeUser())
     };
 
     return (
@@ -13,7 +14,7 @@ export default function Header() {
             <div className="container mx-auto flex justify-between items-center">
                 <h1 className="text-xl font-bold">
                     <NavLink to="/" end={true}>
-                        {`Hello, ${userContext.user.email}!`}
+                        {`Hello, ${user.email}!`}
                     </NavLink>
                 </h1>
                 <nav>

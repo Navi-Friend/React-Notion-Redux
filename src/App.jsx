@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Wrapper from "./Routes/Wrapper";
 import ErrorPage from "./Routes/ErrorPage";
 import Login from "./Routes/Login";
-import UserContextProvider from "./Components/userContext";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import About from "./Routes/About";
 import SignUp from "./Routes/SignUp";
@@ -20,32 +19,32 @@ const router = createBrowserRouter([
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
-        children: [
-            {
-                index: true,
-                element: <About />,
-            },
-            {
-                path: "/notes",
-                element: <Notes />,
-            },
-            {
-                path: "/read-note/:noteUUID",
-                element: <ReadNote />,
-            },
-            {
-                path: "/edit-note/:noteUUID",
-                element: <EditNote />,
-            },
-            {
-                path: "/add-note",
-                element: <AddNote />,
-            },
-            {
-                path: "*",
-                element: <ErrorPage />,
-            },
-        ],
+        // children: [
+        //     {
+        //         index: true,
+        //         element: <About />,
+        //     },
+        //     {
+        //         path: "/notes",
+        //         element: <Notes />,
+        //     },
+        //     {
+        //         path: "/read-note/:noteUUID",
+        //         element: <ReadNote />,
+        //     },
+        //     {
+        //         path: "/edit-note/:noteUUID",
+        //         element: <EditNote />,
+        //     },
+        //     {
+        //         path: "/add-note",
+        //         element: <AddNote />,
+        //     },
+        //     {
+        //         path: "*",
+        //         element: <ErrorPage />,
+        //     },
+        // ],
     },
     {
         path: "/login",
@@ -58,9 +57,5 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-    return (
-        <UserContextProvider>
-            <RouterProvider router={router} />
-        </UserContextProvider>
-    );
+    return <RouterProvider router={router} />;
 }

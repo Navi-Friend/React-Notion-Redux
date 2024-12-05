@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { UserContext } from "../Components/userContext";
-import { endpoints } from "../utils/constants";
+import { useSelector } from "react-redux";
+import BackendAPI from "../BackendAPI";
 
 export default function ReadNote() {
     const { noteUUID } = useParams();
 
-    const userContext = useContext(UserContext);
+    const user = useSelector((state) => state);
     const navigate = useNavigate();
 
     const [note, setNote] = useState({});
@@ -14,16 +14,10 @@ export default function ReadNote() {
     useEffect(() => {
         const fetchNote = async () => {
             try {
-                const response = await fetch(
-                    endpoints.userData(userContext.user.id)
-                );
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                const userData = await response.json();
+                const userData = await BackendAPI.getUser(user.uuid)
                 const foundNote = userData.notes.find(
                     (n) => n.uuid === noteUUID
-                ); 
+                );
                 setNote(foundNote);
             } catch (error) {
                 console.error("Error fetching note:", error);
@@ -31,16 +25,15 @@ export default function ReadNote() {
         };
 
         fetchNote();
-    }, [noteUUID, userContext.user.id]);
+    }, [noteUUID, user.uuid]);
 
     const handleDeleteNote = () => {
-        fetch(endpoints.userData(userContext.user.id))
-            .then((r) => r.json())
+        BackendAPI.getUser(user.uuid)
             .then((userData) => {
                 userData.notes = userData.notes.filter(
                     (note) => note.uuid !== noteUUID
                 );
-                fetch(endpoints.userData(userContext.user.id), {
+                fetch(BackendAPI.getUserDataURL(user.uuid), {
                     method: "PUT",
                     body: JSON.stringify(userData),
                     headers: {
@@ -70,7 +63,9 @@ export default function ReadNote() {
                     </button>
                 </div>
             </div>
-            <textarea className="border p-3 w-full h-52 resize-none focus-visible:none outline-none" value={note.description} ></textarea>
+            <textarea
+                className="border p-3 w-full h-52 resize-none focus-visible:none outline-none"
+                value={note.description}></textarea>
         </div>
     );
 }

@@ -1,11 +1,10 @@
-import { useContext } from "react";
-import { UserContext } from "./userContext";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function ProtectedRoute({ children }) {
-    const userContext = useContext(UserContext);
-    if (!userContext.user?.email) {
-        console.log("protected route")
+    const user = useSelector((state) => state.user);
+    if (!user?.email) {
+        console.log("protected route");
         return <Navigate to="/login" />;
     }
     return children;

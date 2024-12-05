@@ -1,15 +1,17 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { User } from "../utils/validation";
-import { UserContext } from "../Components/userContext";
-import { endpoints } from "../utils/constants";
 import { v4 as uuidv4 } from "uuid";
-import fetchUser from "../utils/fetchUser";
+import BackendAPI from "../BackendAPI";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../Redux/middleware";
 
 export default function SignUp() {
     const navigate = useNavigate();
-    const userContext = useContext(UserContext);
+
+    const user = useSelector((state) => state);
+    const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
     const handleSetEmail = useCallback((e) => {
@@ -50,16 +52,13 @@ export default function SignUp() {
             notes: [],
         };
         try {
-
-            const existingUser = await fetchUser(email, "");
+            const existingUser = await BackendAPI.getUser("", email, "");
             if (existingUser) {
                 setErrors({ userExist: "User with this email already exists" });
                 return;
             }
-        } catch(err) {
-
-        }
-        fetch(endpoints.register, {
+        } catch (err) {}
+        fetch(BackendAPI.getUsersURL(), {
             method: "POST",
             body: JSON.stringify(body),
             headers: {
@@ -69,8 +68,12 @@ export default function SignUp() {
             .then(async () => {
                 // json-server set 'id' automatically.
                 // I fetch user instead of set 'body' to get 'id' value
-                const currentUser = await fetchUser(email, password)
-                userContext.setUser(currentUser);
+                const currentUser = await BackendAPI.getUser(
+                    "",
+                    email,
+                    password
+                );
+                dispatch(setUser(currentUser));
                 navigate("/");
             })
             .catch((err) => {
