@@ -3,7 +3,7 @@ import useNotes from "../hooks/useNotes";
 import { useSelector } from "react-redux";
 
 export default function Notes() {
-    const user = useSelector((state) => state);
+    const user = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     const [notes, addNote, deleteNote] = useNotes(user.uuid);

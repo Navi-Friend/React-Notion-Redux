@@ -9,6 +9,10 @@ import Notes from "./Routes/Notes";
 import ReadNote from "./Routes/ReadNote";
 import EditNote from "./Routes/EditNote";
 import AddNote from "./Routes/AddNote";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import LocalStorageAPI from "./LocalStorageAPI";
+import { setUser } from "./Redux/middleware";
 
 const router = createBrowserRouter([
     {
@@ -19,32 +23,32 @@ const router = createBrowserRouter([
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
-        // children: [
-        //     {
-        //         index: true,
-        //         element: <About />,
-        //     },
-        //     {
-        //         path: "/notes",
-        //         element: <Notes />,
-        //     },
-        //     {
-        //         path: "/read-note/:noteUUID",
-        //         element: <ReadNote />,
-        //     },
-        //     {
-        //         path: "/edit-note/:noteUUID",
-        //         element: <EditNote />,
-        //     },
-        //     {
-        //         path: "/add-note",
-        //         element: <AddNote />,
-        //     },
-        //     {
-        //         path: "*",
-        //         element: <ErrorPage />,
-        //     },
-        // ],
+        children: [
+            {
+                index: true,
+                element: <About />,
+            },
+            {
+                path: "/notes",
+                element: <Notes />,
+            },
+            {
+                path: "/read-note/:noteUUID",
+                element: <ReadNote />,
+            },
+            {
+                path: "/edit-note/:noteUUID",
+                element: <EditNote />,
+            },
+            {
+                path: "/add-note",
+                element: <AddNote />,
+            },
+            {
+                path: "*",
+                element: <ErrorPage />,
+            },
+        ],
     },
     {
         path: "/login",
@@ -57,5 +61,12 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
+    const dispatch = useDispatch()
+    useEffect(() => {
+        const user = LocalStorageAPI.getUser()
+        if (user?.email) {
+            dispatch(setUser(user))
+        }
+    }, [dispatch])
     return <RouterProvider router={router} />;
 }

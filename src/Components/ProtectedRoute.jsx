@@ -1,8 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import LocalStorageAPI from "../LocalStorageAPI";
 
 export default function ProtectedRoute({ children }) {
-    const user = useSelector((state) => state.user);
+    const user = LocalStorageAPI.getUser()
+    console.log(user)
     if (!user?.email) {
         console.log("protected route");
         return <Navigate to="/login" />;

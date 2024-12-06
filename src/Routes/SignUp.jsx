@@ -10,7 +10,6 @@ import { setUser } from "../Redux/middleware";
 export default function SignUp() {
     const navigate = useNavigate();
 
-    const user = useSelector((state) => state);
     const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
@@ -66,14 +65,7 @@ export default function SignUp() {
             },
         })
             .then(async () => {
-                // json-server set 'id' automatically.
-                // I fetch user instead of set 'body' to get 'id' value
-                const currentUser = await BackendAPI.getUser(
-                    "",
-                    email,
-                    password
-                );
-                dispatch(setUser(currentUser));
+                dispatch(setUser(body));
                 navigate("/");
             })
             .catch((err) => {

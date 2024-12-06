@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-// import { endpoints } from "../utils/constants";
+import BackendAPI from "../BackendAPI";
 
-export default function useNotes(userId) {
+
+export default function useNotes(userUUID) {
     const [notes, setNotes] = useState([]);
 
     useEffect(() => {
-        fetch(endpoints.userData(userId))
+        fetch(BackendAPI.getUser(userUUID))
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -19,16 +20,16 @@ export default function useNotes(userId) {
                 setNotes([]);
                 throw new Error("Unable to load notes", err);
             });
-    }, [userId]);
+    }, [userUUID]);
 
     const handleAddNote = useCallback(
         (note) => {
-            fetch(endpoints.userData(userId))
+            fetch(BackendAPI.getUser(userUUID))
                 .then((r) => r.json())
                 .then((userData) => {
                     userData.notes = [...userData.notes, note];
 
-                    fetch(endpoints.userData(userId), {
+                    fetch(BackendAPI.getUser(userUUID), {
                         method: "PUT",
                         body: JSON.stringify(userData),
                         headers: {
@@ -46,13 +47,13 @@ export default function useNotes(userId) {
     );
 
     const handleDeleteNote = useCallback((noteUUID) => {
-        fetch(endpoints.userData(userId))
+        fetch(BackendAPI.getUser(userUUID))
             .then((r) => r.json())
             .then((userData) => {
                 userData.notes = userData.notes.filter(
                     (note) => note.uuid !== noteUUID
                 );
-                fetch(endpoints.userData(userId), {
+                fetch(BackendAPI.getUser(userUUID), {
                     method: "PUT",
                     body: JSON.stringify(userData),
                     headers: {

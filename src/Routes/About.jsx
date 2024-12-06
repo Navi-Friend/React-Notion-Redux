@@ -1,11 +1,10 @@
 import { useSelector } from "react-redux";
-// import { UserContext } from "../Components/userContext";
 import { NavLink } from "react-router-dom";
 
 export default function About() {
     const user = useSelector((state) => state.user);
-    console.log(user)
     const prettyDate = new Date(user.date).toLocaleString();
+
     return (
         <div className="flex flex-col items-center p-12 text-xl gap-3">
             <h1 className="pb-8 text-5xl">About me</h1>

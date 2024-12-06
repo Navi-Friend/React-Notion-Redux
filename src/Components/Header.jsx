@@ -1,12 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { removeUser } from "../Redux/actions";
+import { unsetUser } from "../Redux/middleware";
 
 export default function Header() {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch()
     const handleLogout = () => {
-        dispatch(removeUser())
+        dispatch(unsetUser())
     };
 
     return (
