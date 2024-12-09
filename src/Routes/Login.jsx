@@ -29,18 +29,14 @@ export default function Login() {
             User.parse({ email, password });
             setErrors(null);
 
-            const user = await BackendAPI.getUser(
-                "",
-                email,
-                password
-            );
-            if (user === null) throw new Error()
+            const user = await BackendAPI.getUser("", email, password);
+            if (user === null) throw new Error();
             setLoadedUser(user);
-        } catch (err) {
-            if (err instanceof z.ZodError) {
-                setErrors(err.format());
-            } else if (err instanceof Error) {
-                console.error(err);
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                setErrors(error.format());
+            } else if (error instanceof Error) {
+                console.error(error);
                 setErrors({
                     notFound:
                         "User with this email and password does not found",
@@ -84,8 +80,8 @@ export default function Login() {
                 </div>
                 {errors?.email && (
                     <div className="text-red-500 mb-5">
-                        {errors?.email?._errors.map((err) => (
-                            <div key={err}>{err}</div>
+                        {errors?.email?._errors.map((error) => (
+                            <div key={error}>{error}</div>
                         ))}
                     </div>
                 )}
@@ -107,8 +103,8 @@ export default function Login() {
                 </div>
                 {errors?.password && (
                     <div className="text-red-500 mb-5">
-                        {errors?.password?._errors.map((err) => (
-                            <div key={err}>{err}</div>
+                        {errors?.password?._errors.map((error) => (
+                            <div key={error}>{error}</div>
                         ))}
                     </div>
                 )}

@@ -48,38 +48,38 @@ function Notes({ getNotes, notes, removeNote }) {
                 Add new Note
             </Link>
 
-            {!notes.notes
-                ? ""
-                : notes.notes
-                      .sort((a, b) => b.date - a.date)
-                      .map((note) => (
-                          <div
-                              key={note.uuid}
-                              onClick={(e) => handleClickNote(note.uuid, e)}
-                              className="flex items-center justify-between w-full bg-gray-200 p-2 rounded cursor-pointer ">
-                              <div className="w-3/4">
-                                  <h2 className="text-ellipsis overflow-hidden">
-                                      {note.title}
-                                  </h2>
-                                  <span className="text-sm text-slate-700">
-                                      {new Date(note.date).toLocaleDateString()}
-                                  </span>
-                              </div>
-                              <div>
-                                  <Link
-                                      to={`/edit-note/${note.uuid}`}
-                                      className="mr-4">
-                                      ✍️
-                                  </Link>
+            {!notes.notes.length ? (
+                <div>There are no notes here yet</div>
+            ) : (
+                notes.notes.map((note) => (
+                    <div
+                        key={note.uuid}
+                        onClick={(e) => handleClickNote(note.uuid, e)}
+                        className="flex items-center justify-between w-full bg-gray-200 p-2 rounded cursor-pointer ">
+                        <div className="w-3/4">
+                            <h2 className="text-ellipsis overflow-hidden">
+                                {note.title}
+                            </h2>
+                            <span className="text-sm text-slate-700">
+                                {new Date(note.date).toLocaleDateString()}
+                            </span>
+                        </div>
+                        <div>
+                            <Link
+                                to={`/edit-note/${note.uuid}`}
+                                className="mr-4">
+                                ✍️
+                            </Link>
 
-                                  <button
-                                      onClick={() => handleDeleteNote(note)}
-                                      className="text-red-500">
-                                      🗑
-                                  </button>
-                              </div>
-                          </div>
-                      ))}
+                            <button
+                                onClick={() => handleDeleteNote(note)}
+                                className="text-red-500">
+                                🗑
+                            </button>
+                        </div>
+                    </div>
+                ))
+            )}
         </div>
     );
 }

@@ -4,9 +4,9 @@ import { unsetUser } from "../Redux/middleware";
 
 export default function Header() {
     const user = useSelector((state) => state.user.user);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const handleLogout = () => {
-        dispatch(unsetUser())
+        dispatch(unsetUser());
     };
 
     return (

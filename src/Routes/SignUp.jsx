@@ -35,9 +35,9 @@ export default function SignUp() {
             checkPasswordsMatch();
 
             signUpUser();
-        } catch (err) {
-            if (err instanceof z.ZodError) {
-                setErrors({ ...errors, ...err.format() });
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                setErrors({ ...errors, ...error.format() });
             }
         }
     }, [email, password]);
@@ -55,8 +55,8 @@ export default function SignUp() {
                 dispatch(setUser(body));
                 navigate("/");
             })
-            .catch((err) => {
-                const errorData = JSON.parse(err.message);
+            .catch((error) => {
+                const errorData = JSON.parse(error.message);
                 setErrors({ ...errors, ...errorData });
             });
     };
@@ -102,8 +102,8 @@ export default function SignUp() {
                 </div>
                 {errors?.email && (
                     <div className="text-red-500 mb-5">
-                        {errors?.email?._errors.map((err) => (
-                            <div key={err}>{err}</div>
+                        {errors?.email?._errors.map((error) => (
+                            <div key={error}>{error}</div>
                         ))}
                     </div>
                 )}
@@ -141,8 +141,8 @@ export default function SignUp() {
                 </div>
                 {errors?.password && (
                     <div className="text-red-500 mb-5">
-                        {errors?.password?._errors.map((err) => (
-                            <div key={err}>{err}</div>
+                        {errors?.password?._errors.map((error) => (
+                            <div key={error}>{error}</div>
                         ))}
                     </div>
                 )}

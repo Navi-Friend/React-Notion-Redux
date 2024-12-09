@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import LocalStorageAPI from "../LocalStorageAPI";
 
 export default function ErrorPage() {
-    const user = LocalStorageAPI.getUser()
+    const user = LocalStorageAPI.getUser();
 
     return (
         <div id="error-page" className="text-3xl mx-auto w-fit">

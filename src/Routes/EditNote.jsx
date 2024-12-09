@@ -43,7 +43,7 @@ export default function ReadNote() {
         setTitle(e.target.value);
     });
 
-    const [err, setErr] = useState([]);
+    const [error, setErr] = useState([]);
     const handleSaveChanges = useCallback(() => {
         if (title === "") {
             setErr(["Title must not be empty."]);
@@ -64,9 +64,9 @@ export default function ReadNote() {
                     Back
                 </Link>
             </div>
-            {!err.length
+            {!error.length
                 ? ""
-                : err.map((item) => (
+                : error.map((item) => (
                       <div className="text-red-500 mb-5">{item}</div>
                   ))}
             <input

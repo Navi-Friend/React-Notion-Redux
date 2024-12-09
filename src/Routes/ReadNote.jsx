@@ -35,7 +35,9 @@ export default function ReadNote() {
 
     return (
         <div className="text-2xl flex flex-col gap-3 items-center w-1/2">
-                <div className="text-4xl max-w-60 overflow-hidden text-ellipsis text-nowrap">{note.title}</div>
+            <div className="text-4xl max-w-60 overflow-hidden text-ellipsis text-nowrap">
+                {note.title}
+            </div>
             <div className="flex w-full justify-between">
                 <Link
                     to="/notes"

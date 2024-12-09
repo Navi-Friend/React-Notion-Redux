@@ -1,8 +1,8 @@
 # Notion
-
+![alt text](image.png)
 ## Project Description
 Notion is a web application for note management
-Web application is developed using React, React.Context, jsonn-server as a database and Taliwind CSS for styling
+Web application is developed using React, Redux, json-server as a database and Taliwind CSS for styling
 
 ## Application Pages
 - Home page: `/`
@@ -28,3 +28,10 @@ npm run db
 ```
 npm run dev
 ```
+## Used Technologies
+- React
+- Redux
+- TailwindCSS
+- Json-server
+- React-redux, Redux-thunk
+- Zod

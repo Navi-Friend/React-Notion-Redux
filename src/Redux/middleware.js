@@ -45,8 +45,9 @@ export const fetchNotes = () => async (dispatch) => {
             dispatch(unsetUser());
         }
         const userData = await BackendAPI.getUser(userID);
-        console.log(userData.notes)
-        dispatch(fetchNotesSuccess(userData.notes));
+        dispatch(
+            fetchNotesSuccess(userData.notes.sort((a, b) => b.date - a.date))
+        );
     } catch (error) {
         console.error(error);
         dispatch(notesOperationError(error));
@@ -92,7 +93,6 @@ export const changeNote = (newNote) => async (dispatch) => {
     }
 };
 
-
 export const addNote = (noteData) => async (dispatch) => {
     dispatch(notesOperationStart());
     try {
@@ -103,10 +103,9 @@ export const addNote = (noteData) => async (dispatch) => {
             uuid: uuidv4(),
             title: noteData.title,
             description: noteData.description,
-            date: Date.now()
-        }
-        console.log(newNote)
-        userData.notes.push(newNote)
+            date: Date.now(),
+        };
+        userData.notes.unshift(newNote);
 
         BackendAPI.changeUserData(userData).then(() => {
             dispatch(addNoteSuccess(newNote));

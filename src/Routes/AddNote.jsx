@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addNote } from "../Redux/middleware";
@@ -19,7 +19,7 @@ export default function ReadNote() {
         setTitle(e.target.value);
     });
 
-    const [err, setErr] = useState([]);
+    const [error, setErr] = useState([]);
     const handleSaveChanges = useCallback(() => {
         if (title === "") {
             setErr(["Title must not be empty."]);
@@ -39,9 +39,9 @@ export default function ReadNote() {
                     Back
                 </Link>
             </div>
-            {!err.length
+            {!error.length
                 ? ""
-                : err.map((item) => (
+                : error.map((item) => (
                       <div className="text-red-500 mb-5">{item}</div>
                   ))}
             <input

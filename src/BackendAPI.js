@@ -17,15 +17,13 @@ export default class BackendAPI {
         const url = new URL(this.getUserDataURL(id));
         url.searchParams.append("email", email.toLocaleLowerCase());
         url.searchParams.append("password", password);
-        console.log(url);
         return this.#fetch(url)
             .then((user) => {
-                console.log(user);
-                if (!user || (user instanceof Array && !user.length)) {
+                if (!user || (Array.isArray(user) && !user.length)) {
                     return null;
                 }
 
-                if (user instanceof Array && user.length) {
+                if (Array.isArray(user) && user.length) {
                     return user[0];
                 }
                 return user;
@@ -59,8 +57,8 @@ export default class BackendAPI {
                     JSON.stringify({ serverError: "Server error" })
                 );
             }
-        } catch (err) {
-            throw err;
+        } catch (error) {
+            throw error;
         }
     }
 
