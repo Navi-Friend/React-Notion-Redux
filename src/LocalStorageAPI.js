@@ -10,7 +10,6 @@ export default class LocalStorageAPI {
     }
 
     static setUser(user) {
-        console.log(user)
         const userString = JSON.stringify(user);
         localStorage.setItem("user", userString);
     }

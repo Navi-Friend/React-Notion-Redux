@@ -9,7 +9,8 @@ export const UNSET_USER_SUCCESS = "UNSET/USER/SUCCESS";
 
 export const FETCH_NOTES_SUCCESS = "FETCH/NOTES/SUCCESS";
 export const REMOVE_NOTE_SUCCESS = "REMOVE/NOTE/START";
-
+export const CHANGE_NOTE_SUCCESS = "CHANGE/NOTE/SUCCESS";
+export const ADD_NOTE_SUCCESS = "ADD/NOTE/SUCCESS";
 // Actions generators
 // Users
 
@@ -58,4 +59,12 @@ export function notesOperationError(error) {
 
 export function notesOperationStart() {
     return { type: NOTES_OPERATION_START };
+}
+
+export function changeNoteSuccess(note) {
+    return { type: CHANGE_NOTE_SUCCESS, payload: { note: note } };
+}
+
+export function addNoteSuccess(note) {
+    return { type: ADD_NOTE_SUCCESS, payload: { note: note } };
 }

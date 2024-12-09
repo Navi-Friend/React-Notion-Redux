@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import BackendAPI from "../BackendAPI";
 
 export default function ReadNote() {
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
     const navigate = useNavigate();
 
     const [textarea, setTextarea] = useState("");

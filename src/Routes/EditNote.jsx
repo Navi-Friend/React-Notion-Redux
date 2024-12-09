@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import BackendAPI from "../BackendAPI";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { changeNote } from "../Redux/middleware";
 
 export default function ReadNote() {
     const { noteUUID } = useParams();
 
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [note, setNote] = useState({});
@@ -47,23 +49,9 @@ export default function ReadNote() {
             setErr(["Title must not be empty."]);
             return;
         }
-        BackendAPI.getUser(user.id).then((userData) => {
-            let userDataNote = userData.notes.filter(
-                (note) => note.uuid === noteUUID
-            )[0];
-            userDataNote.title = title;
-            userDataNote.description = textarea;
-            userData = { ...userData, userDataNote };
-            fetch(BackendAPI.getUserDataURL(user.id), {
-                method: "PUT",
-                body: JSON.stringify(userData),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }).then(() => {
-                navigate("/notes");
-            });
-        });
+
+        dispatch(changeNote({ ...note, title: title, description: textarea }));
+        navigate("/notes");
     });
 
     return (

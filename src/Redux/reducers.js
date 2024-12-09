@@ -1,4 +1,6 @@
 import {
+    ADD_NOTE_SUCCESS,
+    CHANGE_NOTE_SUCCESS,
     FETCH_NOTES_SUCCESS,
     NOTES_OPERATION_ERROR,
     NOTES_OPERATION_START,
@@ -71,6 +73,17 @@ export function notesReducer(state = INITIAL_NOTES_STATE, action) {
                 ),
                 loading: false,
             };
+        case CHANGE_NOTE_SUCCESS:
+            return {
+                ...state,
+                notes: state.notes.map((note) => {
+                    if (note.uuid == action.payload.note.uuid) {
+                        return (note = action.payload.note);
+                    }
+                    return note;
+                }),
+                loading: false,
+            };
         case NOTES_OPERATION_START:
             return {
                 ...state,
@@ -80,6 +93,12 @@ export function notesReducer(state = INITIAL_NOTES_STATE, action) {
             return {
                 ...state,
                 error: String(action.payload.error),
+                loading: false,
+            };
+        case ADD_NOTE_SUCCESS:
+            return {
+                ...state,
+                notes: [...notes, action.payload.note],
                 loading: false,
             };
         default:
