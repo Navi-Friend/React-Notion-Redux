@@ -14,7 +14,7 @@ export default function ReadNote() {
     useEffect(() => {
         const fetchNote = async () => {
             try {
-                const userData = await BackendAPI.getUser(user.uuid);
+                const userData = await BackendAPI.getUser(user.id);
                 const foundNote = userData.notes.find(
                     (n) => n.uuid === noteUUID
                 );
@@ -29,7 +29,7 @@ export default function ReadNote() {
         };
 
         fetchNote();
-    }, [noteUUID, user.uuid]);
+    }, [noteUUID, user.id]);
 
     const [textarea, setTextarea] = useState("");
     const handleChangeTextarea = useCallback((e) => {
@@ -47,14 +47,14 @@ export default function ReadNote() {
             setErr(["Title must not be empty."]);
             return;
         }
-        BackendAPI.getUser(user.uuid).then((userData) => {
+        BackendAPI.getUser(user.id).then((userData) => {
             let userDataNote = userData.notes.filter(
                 (note) => note.uuid === noteUUID
             )[0];
             userDataNote.title = title;
             userDataNote.description = textarea;
             userData = { ...userData, userDataNote };
-            fetch(BackendAPI.getUserDataURL(user.uuid), {
+            fetch(BackendAPI.getUserDataURL(user.id), {
                 method: "PUT",
                 body: JSON.stringify(userData),
                 headers: {

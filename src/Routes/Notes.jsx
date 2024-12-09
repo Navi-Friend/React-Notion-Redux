@@ -1,12 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import useNotes from "../hooks/useNotes";
-import { useSelector } from "react-redux";
+import { fetchNotes, removeNote } from "../Redux/middleware";
+import { connect } from "react-redux";
+import { useEffect } from "react";
 
-export default function Notes() {
-    const user = useSelector((state) => state.user);
-    const navigate = useNavigate();
-
-    const [notes, addNote, deleteNote] = useNotes(user.uuid);
+function Notes({ getNotes, notes, removeNote }) {
     // Note example
     // {
     //     uuid: uuidv4(),  // must contain uuid
@@ -15,10 +12,16 @@ export default function Notes() {
     //     date: Date.now(),
     // })
 
+    useEffect(() => {
+        getNotes();
+    }, []);
+
     const handleDeleteNote = (note) => {
-        deleteNote(note.uuid);
+        console.log(note);
+        removeNote(note.uuid);
     };
 
+    const navigate = useNavigate();
     const handleClickNote = (uuid, e) => {
         if (
             e.target.closest("button") ||
@@ -30,6 +33,13 @@ export default function Notes() {
         navigate(`/read-note/${uuid}`);
     };
 
+    if (notes.loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+            </div>
+        );
+    }
     return (
         <div className="text-2xl flex flex-col gap-3 items-center w-3/4">
             <h1 className="text-5xl mb-10">Notes</h1>
@@ -39,9 +49,9 @@ export default function Notes() {
                 Add new Note
             </Link>
 
-            {!notes.length
+            {!notes.notes
                 ? ""
-                : notes
+                : notes.notes
                       .sort((a, b) => b.date - a.date)
                       .map((note) => (
                           <div
@@ -72,3 +82,14 @@ export default function Notes() {
         </div>
     );
 }
+
+const mapStateToProps = (state) => ({
+    notes: state.notes,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    getNotes: () => dispatch(fetchNotes()),
+    removeNote: (noteUUID) => dispatch(removeNote(noteUUID)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Notes);

@@ -6,36 +6,90 @@ export default class BackendAPI {
         return this.#USERS_URL;
     }
 
-    static getUserDataURL(uuid = "") {
-        const url = new URL(`${this.#BASE_URL}/users`);
-        url.searchParams.append("uuid", uuid);
+    static getUserDataURL(id = "") {
+        const url = new URL(`${this.#BASE_URL}/users/${id}`);
         return url;
     }
 
-    static getUser(uuid = "", email = "", password = "") {
-        const url = new URL(this.getUserDataURL(uuid));
-        url.searchParams.append("email", email);
-        url.searchParams.append("password", password);
+    static getUser(id = "", email = "", password = "") {
+        if (id === "" && email === "" && password === "") return null;
 
+        const url = new URL(this.getUserDataURL(id));
+        url.searchParams.append("email", email.toLocaleLowerCase());
+        url.searchParams.append("password", password);
+        console.log(url);
         return this.#fetch(url)
-            .then((users) => {
-                if (!users || !users.length) {
-                    console.log(url, users);
-                    throw new Error("Was gotten not one user");
+            .then((user) => {
+                console.log(user);
+                if (!user || (user instanceof Array && !user.length)) {
+                    return null;
                 }
-                return users[0];
+
+                if (user instanceof Array && user.length) {
+                    return user[0];
+                }
+                return user;
             })
             .catch((error) => {
                 throw error;
             });
     }
 
-    static #fetch = (url) => {
-        return fetch(url).then((r) => {
-            if (!r.ok) {
-                throw new Error("Error retrieving user data");
+    static async createUser(user) {
+        try {
+            const existingUser = await BackendAPI.getUser("", user.email, "");
+            if (existingUser) {
+                throw new Error(
+                    JSON.stringify({
+                        userExists: "User with this email already exists",
+                    })
+                );
             }
-            return r.json();
-        });
+
+            user = { ...user, email: user.email.toLowerCase() };
+            const response = await fetch(this.#USERS_URL, {
+                method: "POST",
+                body: JSON.stringify(user),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(
+                    JSON.stringify({ serverError: "Server error" })
+                );
+            }
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    static async changeUserData(userData) {
+        try {
+            userData = { ...userData, email: userData.email.toLowerCase() };
+
+            const response = await fetch(this.getUserDataURL(userData.id), {
+                method: "PUT",
+                body: JSON.stringify(userData),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(
+                    JSON.stringify({ serverError: "Server error" })
+                );
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static #fetch = async (url) => {
+        const r = await fetch(url);
+        if (!r.ok) {
+            throw new Error("Error retrieving user data");
+        }
+        return await r.json();
     };
 }

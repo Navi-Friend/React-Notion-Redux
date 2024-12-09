@@ -9,7 +9,7 @@ import BackendAPI from "../BackendAPI";
 export default function Login() {
     const navigate = useNavigate();
 
-    const isLoading = useSelector((state) => state.loading);
+    const isLoading = useSelector((state) => state.user.loading);
     const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
@@ -22,21 +22,25 @@ export default function Login() {
         setPassword(e.target.value);
     });
 
-    const [loadedUser, setLoadedUser] = useState("")
+    const [loadedUser, setLoadedUser] = useState("");
     const [errors, setErrors] = useState(null);
     const handleLogIn = useCallback(async () => {
         try {
             User.parse({ email, password });
             setErrors(null);
 
-            const user = await BackendAPI.getUser("", email, password);
-            setLoadedUser(user)
+            const user = await BackendAPI.getUser(
+                "",
+                email,
+                password
+            );
+            if (user === null) throw new Error()
+            setLoadedUser(user);
         } catch (err) {
             if (err instanceof z.ZodError) {
-                console.log(err.format());
                 setErrors(err.format());
             } else if (err instanceof Error) {
-                console.error(err)
+                console.error(err);
                 setErrors({
                     notFound:
                         "User with this email and password does not found",
@@ -53,7 +57,7 @@ export default function Login() {
     }, [loadedUser]);
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center flex-col justify-center min-h-screen bg-gray-100">
             <div
                 className="bg-white p-6 rounded-lg shadow-md w-96 flex flex-col"
                 onSubmit={handleLogIn}>
@@ -113,9 +117,11 @@ export default function Login() {
                     className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition duration-200">
                     Log In
                 </button>
-
-                <Link to="/signup" className="mt-10 mx-auto w-fit">
-                    Don't have an accout? Sign up!
+            </div>
+            <div className="w-fit mx-auto mt-3">
+                Don't have an accout?
+                <Link to="/signup" className="text-blue-600 font-bold pl-1">
+                    Sign up!
                 </Link>
             </div>
         </div>

@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { User } from "../utils/validation";
 import { v4 as uuidv4 } from "uuid";
 import BackendAPI from "../BackendAPI";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUser } from "../Redux/middleware";
 
 export default function SignUp() {
@@ -42,37 +42,22 @@ export default function SignUp() {
         }
     }, [email, password]);
 
-    const signUpUser = async () => {
+    const signUpUser = () => {
         const body = {
-            email,
+            email: email,
             password,
             date: Date.now(),
-            uuid: uuidv4(),
+            id: uuidv4(),
             notes: [],
         };
-        try {
-            const existingUser = await BackendAPI.getUser("", email, "");
-            if (existingUser) {
-                setErrors({ userExist: "User with this email already exists" });
-                return;
-            }
-        } catch (err) {}
-        fetch(BackendAPI.getUsersURL(), {
-            method: "POST",
-            body: JSON.stringify(body),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then(async () => {
+        BackendAPI.createUser(body)
+            .then(() => {
                 dispatch(setUser(body));
                 navigate("/");
             })
             .catch((err) => {
-                setErrors({
-                    ...errors,
-                    err,
-                });
+                const errorData = JSON.parse(err.message);
+                setErrors({ ...errors, ...errorData });
             });
     };
 
@@ -88,13 +73,15 @@ export default function SignUp() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center flex-col justify-center min-h-screen bg-gray-100">
             <div
                 className="bg-white p-6 rounded-lg shadow-md w-96"
                 onSubmit={handleLogIn}>
                 <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-                {errors?.userExist && (
-                    <div className="text-red-500 mb-5">{errors?.userExist}</div>
+                {errors?.userExists && (
+                    <div className="text-red-500 mb-5">
+                        {errors?.userExists}
+                    </div>
                 )}
 
                 <div className="mb-2">
@@ -169,6 +156,13 @@ export default function SignUp() {
                     className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition duration-200">
                     Sign Up
                 </button>
+            </div>
+
+            <div className="mt-4">
+                Already has an account?
+                <Link to="/login" className="text-blue-600 font-bold pl-1">
+                    Login
+                </Link>
             </div>
         </div>
     );

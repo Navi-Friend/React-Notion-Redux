@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { unsetUser } from "../Redux/middleware";
 
 export default function Header() {
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
     const dispatch = useDispatch()
     const handleLogout = () => {
         dispatch(unsetUser())

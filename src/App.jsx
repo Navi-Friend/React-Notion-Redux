@@ -61,12 +61,12 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     useEffect(() => {
-        const user = LocalStorageAPI.getUser()
-        if (user?.email) {
-            dispatch(setUser(user))
+        const user = LocalStorageAPI.getUser();
+        if (user?.id) {
+            dispatch(setUser(user));
         }
-    }, [dispatch])
+    }, []);
     return <RouterProvider router={router} />;
 }

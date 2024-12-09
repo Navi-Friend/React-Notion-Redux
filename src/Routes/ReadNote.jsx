@@ -6,7 +6,7 @@ import BackendAPI from "../BackendAPI";
 export default function ReadNote() {
     const { noteUUID } = useParams();
 
-    const user = useSelector((state) => state);
+    const user = useSelector((state) => state.notes);
     const navigate = useNavigate();
 
     const [note, setNote] = useState({});

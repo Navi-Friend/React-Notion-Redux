@@ -24,7 +24,7 @@ export default function ReadNote() {
             setErr(["Title must not be empty."]);
             return;
         }
-        BackendAPI.getUser(user.uuid).then((userData) => {
+        BackendAPI.getUser(user.id).then((userData) => {
                 const newNote = {
                     uuid: uuidv4(),
                     title: title,
@@ -32,7 +32,7 @@ export default function ReadNote() {
                     date: Date.now(),
                 };
                 userData.notes = [...userData.notes, newNote];
-                fetch(BackendAPI.getUserDataURL(user.uuid), {
+                fetch(BackendAPI.getUserDataURL(user.id), {
                     method: "PUT",
                     body: JSON.stringify(userData),
                     headers: {

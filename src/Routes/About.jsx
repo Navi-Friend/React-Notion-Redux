@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 
 export default function About() {
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
     const prettyDate = new Date(user.date).toLocaleString();
 
     return (
