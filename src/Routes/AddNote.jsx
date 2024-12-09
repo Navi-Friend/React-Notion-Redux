@@ -1,11 +1,12 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
-import { useSelector } from "react-redux";
-import BackendAPI from "../BackendAPI";
+import { useDispatch, useSelector } from "react-redux";
+import { addNote } from "../Redux/middleware";
 
 export default function ReadNote() {
     const user = useSelector((state) => state.user.user);
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
     const [textarea, setTextarea] = useState("");
@@ -24,24 +25,8 @@ export default function ReadNote() {
             setErr(["Title must not be empty."]);
             return;
         }
-        BackendAPI.getUser(user.id).then((userData) => {
-                const newNote = {
-                    uuid: uuidv4(),
-                    title: title,
-                    description: textarea,
-                    date: Date.now(),
-                };
-                userData.notes = [...userData.notes, newNote];
-                fetch(BackendAPI.getUserDataURL(user.id), {
-                    method: "PUT",
-                    body: JSON.stringify(userData),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }).then(() => {
-                    navigate("/notes");
-                });
-            });
+        dispatch(addNote({ title: title, description: textarea }));
+        navigate("/notes");
     });
 
     return (

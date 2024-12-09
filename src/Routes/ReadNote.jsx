@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import BackendAPI from "../BackendAPI";
+import { removeNote } from "../Redux/middleware";
 
 export default function ReadNote() {
     const { noteUUID } = useParams();
 
-    const user = useSelector((state) => state.notes);
+    const user = useSelector((state) => state.user.user);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [note, setNote] = useState({});
-
+    const [note, setNote] = useState("");
     useEffect(() => {
         const fetchNote = async () => {
             try {
-                const userData = await BackendAPI.getUser(user.uuid)
+                const userData = await BackendAPI.getUser(user.id);
                 const foundNote = userData.notes.find(
                     (n) => n.uuid === noteUUID
                 );
@@ -25,29 +26,16 @@ export default function ReadNote() {
         };
 
         fetchNote();
-    }, [noteUUID, user.uuid]);
+    }, [noteUUID, user.id]);
 
     const handleDeleteNote = () => {
-        BackendAPI.getUser(user.uuid)
-            .then((userData) => {
-                userData.notes = userData.notes.filter(
-                    (note) => note.uuid !== noteUUID
-                );
-                fetch(BackendAPI.getUserDataURL(user.uuid), {
-                    method: "PUT",
-                    body: JSON.stringify(userData),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }).then(() => {
-                    navigate("/notes");
-                });
-            });
+        dispatch(removeNote(noteUUID));
+        navigate("/notes");
     };
 
     return (
         <div className="text-2xl flex flex-col gap-3 items-center w-1/2">
-            <h1 className="text-4xl">{note.title}</h1>
+                <div className="text-4xl max-w-60 overflow-hidden text-ellipsis text-nowrap">{note.title}</div>
             <div className="flex w-full justify-between">
                 <Link
                     to="/notes"

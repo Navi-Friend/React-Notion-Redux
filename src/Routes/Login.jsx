@@ -22,7 +22,7 @@ export default function Login() {
         setPassword(e.target.value);
     });
 
-    const [loadedUser, setLoadedUser] = useState("");
+    const [loadedUser, setLoadedUser] = useState(null);
     const [errors, setErrors] = useState(null);
     const handleLogIn = useCallback(async () => {
         try {

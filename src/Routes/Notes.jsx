@@ -14,7 +14,6 @@ function Notes({ getNotes, notes, removeNote }) {
 
     useEffect(() => {
         getNotes();
-        console.log(notes);
     }, []);
 
     const handleDeleteNote = (note) => {
@@ -59,9 +58,9 @@ function Notes({ getNotes, notes, removeNote }) {
                               onClick={(e) => handleClickNote(note.uuid, e)}
                               className="flex items-center justify-between w-full bg-gray-200 p-2 rounded cursor-pointer ">
                               <div className="w-3/4">
-                                  <div className="overflow-hidden">
-                                      <h2>{note.title}</h2>
-                                  </div>
+                                  <h2 className="text-ellipsis overflow-hidden">
+                                      {note.title}
+                                  </h2>
                                   <span className="text-sm text-slate-700">
                                       {new Date(note.date).toLocaleDateString()}
                                   </span>

@@ -98,7 +98,7 @@ export function notesReducer(state = INITIAL_NOTES_STATE, action) {
         case ADD_NOTE_SUCCESS:
             return {
                 ...state,
-                notes: [...notes, action.payload.note],
+                notes: [...state.notes, action.payload.note],
                 loading: false,
             };
         default:

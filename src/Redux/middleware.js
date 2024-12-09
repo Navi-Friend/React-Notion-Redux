@@ -1,6 +1,7 @@
 import LocalStorageAPI from "../LocalStorageAPI";
 import BackendAPI from "../BackendAPI";
 import {
+    addNoteSuccess,
     changeNoteSuccess,
     fetchNotesSuccess,
     notesOperationError,
@@ -12,6 +13,7 @@ import {
     usersOperationStart,
 } from "./actions";
 import store from "./Store";
+import { v4 as uuidv4 } from "uuid";
 
 export const setUser = (user) => async (dispatch) => {
     dispatch(usersOperationStart());
@@ -43,7 +45,7 @@ export const fetchNotes = () => async (dispatch) => {
             dispatch(unsetUser());
         }
         const userData = await BackendAPI.getUser(userID);
-
+        console.log(userData.notes)
         dispatch(fetchNotesSuccess(userData.notes));
     } catch (error) {
         console.error(error);
@@ -91,12 +93,20 @@ export const changeNote = (newNote) => async (dispatch) => {
 };
 
 
-export const addNote = (newNote) => async (dispatch) => {
+export const addNote = (noteData) => async (dispatch) => {
     dispatch(notesOperationStart());
     try {
         const userID = store.getState().user.user.id;
         const userData = await BackendAPI.getUser(userID);
-        userData.notes = [...userData.notes, newNote]
+
+        const newNote = {
+            uuid: uuidv4(),
+            title: noteData.title,
+            description: noteData.description,
+            date: Date.now()
+        }
+        console.log(newNote)
+        userData.notes.push(newNote)
 
         BackendAPI.changeUserData(userData).then(() => {
             dispatch(addNoteSuccess(newNote));
